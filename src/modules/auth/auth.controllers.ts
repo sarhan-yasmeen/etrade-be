@@ -1,22 +1,26 @@
 import { Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
 import { User } from "./auth.models";
+import { NotFoundError, UnAuthenticatedError } from "../../errors";
+
 export const signInController = async (req: Request, res: Response) => {
-  try {
-    const user = await User.findOne({ email: req.body?.email });
-    res.status(201).json({ ...user });
-  } catch (error) {
-    res.status(401).json({ message: "Unauthorized ... get out!!" });
+  const user = await User.findOne({ email: req.body?.email });
+  if (!user) {
+    throw new NotFoundError("No user was found");
   }
+  const isCorrectPassword = await user?.comparePassword(req.body.password);
+  console.log("isCorrectPassword", isCorrectPassword);
+  if (!isCorrectPassword) {
+    throw new UnAuthenticatedError();
+  }
+  const token = user?.createJWT();
+  return res.status(StatusCodes.ACCEPTED).json({ user, token });
 };
+
 export const signUpController = async (req: Request, res: Response) => {
-  console.log("Req", req);
-  try {
-    console.log("req.body", req.body);
-    const user = await User.create({ ...req.body });
-    res.status(201).json({ ...user, msg: "user created successfully" });
-  } catch (error) {
-    console.log("Err", error);
-    res.status(401).json({ message: "Unauthorized ... get out!!" });
-  }
+  const user = await User.create({ ...req.body });
+  const token = user.createJWT();
+  return res.status(StatusCodes.CREATED).json({ user, token });
 };
+
 export const signOutController = async () => {};

@@ -6,7 +6,7 @@ mongoose.connection.on("open", () => {
 });
 
 mongoose.connection.on("error", (err) => {
-  console.log("something went wrong");
+  // console.log("something went wrong");
 });
 
 export async function connectDB() {

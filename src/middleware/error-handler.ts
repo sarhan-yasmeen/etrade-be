@@ -11,7 +11,8 @@ export const errorHandlerMiddleware = (
     statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
     msg: err.message || "Something went wrong, Please Try Again",
   };
-  if (err.name === "ValidatorError") {
+  if (err.name === "ValidationError") {
+    console.log("shit is going on here", err);
     customErr.msg = Object.values(err.errors)
       .map((item: any) => item.message)
       .join(",");
@@ -28,5 +29,5 @@ export const errorHandlerMiddleware = (
     customErr.statusCode = 404;
   }
 
-  res.status(customErr.statusCode).json({ msg: customErr.msg });
+  return res.status(customErr.statusCode).json({ msg: customErr.msg });
 };
