@@ -29,6 +29,8 @@ const UserSchema: Schema<IUserDocument> = new Schema({
       "Please provide a valid email",
     ],
     unique: true,
+    trim: true,
+    lowercase: true,
   },
   password: {
     type: String,
