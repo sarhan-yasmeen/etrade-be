@@ -2,19 +2,24 @@ require("express-async-errors");
 import express, { Express, Request, Response } from "express";
 import helmet from "helmet";
 import xss from "xss-clean";
+import morgan from "morgan";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 import { connectDB } from "./src/db";
-import { PORT } from "./src/utils/config";
+import { JWT_SECRET, PORT } from "./src/utils/config";
 import { authRouter } from "./src/modules/auth/auth.routes";
 import { notFoundMiddleware, errorHandlerMiddleware } from "./src/middleware";
 import { seedProducts } from "./src/utils/seedDB";
 
 const app: Express = express();
 
+app.use(cors());
 app.use(helmet());
-
 app.use(xss());
-
+app.use(morgan("tiny"));
 app.use(express.json());
+app.use(cookieParser(JWT_SECRET));
+
 app.use("/api/v1/auth", authRouter);
 
 app.get("/", (req: Request, res: Response) => {

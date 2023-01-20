@@ -11,7 +11,7 @@ interface IUser {
   role: string;
 }
 
-interface IUserDocument extends IUser, Document {
+export interface IUserDocument extends IUser, Document {
   createJWT(): string;
   comparePassword(password: string): Promise<boolean>;
 }
