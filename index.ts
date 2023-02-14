@@ -9,7 +9,9 @@ import { connectDB } from "./src/db";
 import { JWT_SECRET, PORT } from "./src/utils/config";
 import { authRouter } from "./src/modules/auth/auth.routes";
 import { notFoundMiddleware, errorHandlerMiddleware } from "./src/middleware";
-import { seedProducts } from "./src/utils/seedDB";
+// import { seedProducts } from "./src/utils/seedDB";
+import { userRouter } from "./src/modules/user/user.routes";
+import { authenticateUser } from "./src/middleware/authentication";
 
 const app: Express = express();
 
@@ -21,6 +23,7 @@ app.use(express.json());
 app.use(cookieParser(JWT_SECRET));
 
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/users", authenticateUser, userRouter);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");

@@ -2,20 +2,12 @@ import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { User } from "./auth.models";
 import { NotFoundError, UnAuthenticatedError } from "../../errors";
-import { attachCookiesToToken } from "./utils";
+import { attachCookiesToToken, sharedAuthSender } from "./utils";
 
 // register controller
 export const signUpController = async (req: Request, res: Response) => {
   const user = await User.create({ ...req.body });
-  // const token = user.createJWT();
-  const tokenUser = {
-    email: user.email,
-    name: user.name,
-    role: user.role,
-    id: user._id,
-  };
-  attachCookiesToToken({ res, user: tokenUser });
-  return res.status(StatusCodes.CREATED).json({ tokenUser });
+  sharedAuthSender({ user, res, status: "CREATED" });
 };
 
 // login controller
@@ -25,18 +17,10 @@ export const signInController = async (req: Request, res: Response) => {
     throw new NotFoundError("No user was found");
   }
   const isCorrectPassword = await user?.comparePassword(req.body.password);
-  console.log("isCorrectPassword", isCorrectPassword);
   if (!isCorrectPassword) {
     throw new UnAuthenticatedError();
   }
-  const tokenUser = {
-    email: user.email,
-    name: user.name,
-    role: user.role,
-    id: user._id,
-  };
-  attachCookiesToToken({ res, user: tokenUser });
-  return res.status(StatusCodes.ACCEPTED).json({ tokenUser });
+  sharedAuthSender({ user, res, status: "ACCEPTED" });
 };
 
 // logout controller

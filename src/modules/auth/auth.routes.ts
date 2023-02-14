@@ -9,4 +9,4 @@ export const authRouter = Router();
 
 authRouter.post("/signin", signInController);
 authRouter.post("/signup", signUpController);
-authRouter.post("/signout", signOutController);
+authRouter.get("/signout", signOutController);

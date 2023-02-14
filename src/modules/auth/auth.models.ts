@@ -9,6 +9,7 @@ interface IUser {
   email: string;
   password: string;
   role: string;
+  phone: string;
 }
 
 export interface IUserDocument extends IUser, Document {
@@ -32,6 +33,18 @@ const UserSchema: Schema<IUserDocument> = new Schema({
     trim: true,
     lowercase: true,
   },
+  phone: {
+    type: String,
+    trim: true,
+    index: true,
+    unique: true,
+    sparse: true,
+    match: [
+      /^(\()?\d{3}(\))?(-|\s)?\d{3}(-|\s)\d{4}$/,
+      "Please provide a valid phone number",
+    ],
+  },
+
   password: {
     type: String,
     required: [true, "Please provide a Password"],
@@ -40,17 +53,15 @@ const UserSchema: Schema<IUserDocument> = new Schema({
   role: {
     type: String,
     enum: ["admin", "user"],
-    defaults: "user",
+    default: "user",
   },
 });
 
 UserSchema.pre("save", async function () {
   if (!this.isModified("password")) {
-    console.log("no password");
-    throw new CustomAPIError("Password wasn't provided");
+    return;
   }
   const salt = await bcrypt.genSalt(10);
-
   this.password = await bcrypt.hash(this.password, salt);
 });
 
