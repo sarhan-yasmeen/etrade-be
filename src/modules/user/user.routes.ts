@@ -15,8 +15,8 @@ import {
 export const userRouter = Router();
 
 userRouter.get("/", authorizePermissions("admin", "owner"), getAllUsers);
-userRouter.get("/:id", checkPermissions, getSingleUser);
 userRouter.get("/me", getCurrentUser);
+userRouter.get("/:id", checkPermissions, getSingleUser);
 
 userRouter.patch("/:id", updateUser);
 userRouter.patch("/:id/password", updatePassword);

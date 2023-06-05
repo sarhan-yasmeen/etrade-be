@@ -32,7 +32,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use(errorHandlerMiddleware);
 app.use(notFoundMiddleware);
 
-async function startServer() {
+async function startServer () {
   try {
     await connectDB();
     // await seedProducts();
@@ -41,6 +41,7 @@ async function startServer() {
     });
   } catch (error) {
     console.log("Error", error);
+    console.log('string', JSON.stringify(error));
   }
 }
 
